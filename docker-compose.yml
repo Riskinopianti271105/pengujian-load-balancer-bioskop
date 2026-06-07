@@ -1,0 +1,40 @@
+services:
+
+  app1:
+    build: ./app
+    container_name: app-bioskop-1
+    environment:
+      SERVER_NAME: Server Film dan Jadwal
+      BACKEND: app1
+      LOAD_BALANCER_ALGORITHM: Round Robin
+
+  app2:
+    build: ./app
+    container_name: app-bioskop-2
+    environment:
+      SERVER_NAME: Server Booking Tiket
+      BACKEND: app2
+      LOAD_BALANCER_ALGORITHM: Round Robin
+
+  app3:
+    build: ./app
+    container_name: app-bioskop-3
+    environment:
+      SERVER_NAME: Server Pembayaran
+      BACKEND: app3
+      LOAD_BALANCER_ALGORITHM: Round Robin
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-load-balancer
+
+    ports:
+      - "8080:80"
+
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+
+    depends_on:
+      - app1
+      - app2
+      - app3
